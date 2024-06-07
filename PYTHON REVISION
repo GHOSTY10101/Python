@@ -281,3 +281,83 @@ def analyze_text(text):
 text = "Python is created by Guido van Rossum ."
 result = analyze_text(text)
 print("Analysis Result:", result)
+
+**************************
+
+***DAY 2***
+
+class Car:
+    # Class Variable
+    wheels = 4
+
+    def __init__(self, make, model, year=2020):
+        # Instance Variables
+        self.make = make
+        self.model = model
+        self.year = year
+
+    # Instance Method
+    def display_info(self):
+        return f"{self.year} {self.make} {self.model}"
+
+    # Class Method
+    @classmethod
+    def update_wheels(cls, new_wheels):
+        cls.wheels = new_wheels
+
+    # Static Method
+    @staticmethod
+    def is_motor_vehicle():
+        return True
+
+    # Destructor
+    def __del__(self):
+        print(f"{self.make} {self.model} is being deleted")
+
+# Creating instances
+car1 = Car("Toyota", "Camry", 2021)
+car2 = Car("Honda", "Civic")
+
+# Accessing Instance Variables
+print(car1.display_info())  # Output: 2021 Toyota Camry
+print(car2.display_info())  # Output: 2020 Honda Civic
+
+# Accessing Class Variable
+print(Car.wheels)  # Output: 4
+
+# Using Class Method to update class variable
+Car.update_wheels(6)
+print(Car.wheels)  # Output: 6
+
+# Using Static Method
+print(Car.is_motor_vehicle())  # Output: True
+
+# Data Encapsulation, Abstraction, and Hiding Example
+class BankAccount:
+    def __init__(self, owner, balance=0):
+        self.owner = owner
+        self.__balance = balance  # Private variable
+
+    def deposit(self, amount):
+        if amount > 0:
+            self.__balance += amount
+            print(f"Deposited {amount}. New balance is {self.__balance}")
+        else:
+            print("Deposit amount must be positive.")
+
+    def withdraw(self, amount):
+        if 0 < amount <= self.__balance:
+            self.__balance -= amount
+            print(f"Withdrew {amount}. New balance is {self.__balance}")
+        else:
+            print("Invalid withdrawal amount.")
+
+    def get_balance(self):
+        return self.__balance
+
+account = BankAccount("Alice", 1000)
+account.deposit(500)
+account.withdraw(200)
+print(account.get_balance())
+
+******************************************************
