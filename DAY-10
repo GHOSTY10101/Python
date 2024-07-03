@@ -1,0 +1,114 @@
+### Handling Null Values in Pandas
+
+#### Identifying Null Values
+
+import pandas as pd
+
+# Sample DataFrame
+df = pd.DataFrame({
+    'A': [1, 2, None, 4],
+    'B': [None, 'X', 'Y', None],
+    'C': [10, None, 30, 40]
+})
+
+# Identifying null values
+null_values = df.isnull()
+print(null_values)
+
+# Summarizing null values
+null_summary = df.isnull().sum()
+print(null_summary)
+```
+
+#### Handling Missing Data
+1. **Remove Missing Data**
+   ```python
+   # Drop rows with any null values
+   df_dropna = df.dropna()
+   print(df_dropna)
+   
+   # Drop rows with null values in a specific column
+   df_dropna_col = df.dropna(subset=['A'])
+   print(df_dropna_col)
+   
+   # Drop columns with any null values
+   df_dropna_axis1 = df.dropna(axis=1)
+   print(df_dropna_axis1)
+   ```
+
+2. **Impute Missing Data**
+   - **Constant Value + Indicator for Missingness**
+     ```python
+     df['A_filled'] = df['A'].fillna(-1)  # Impute with constant value
+     df['A_missing'] = df['A'].isnull().astype(int)  # Indicator for missingness
+     print(df)
+     ```
+
+3. **Impute with Statistical Measures**
+   - **Mean, Median, Mode**
+     ```python
+     df['A_mean'] = df['A'].fillna(df['A'].mean())
+     df['A_median'] = df['A'].fillna(df['A'].median())
+     df['A_mode'] = df['A'].fillna(df['A'].mode()[0])
+     print(df)
+     ```
+
+   - **Max and Min**
+     ```python
+     df['A_max'] = df['A'].fillna(df['A'].max())
+     df['A_min'] = df['A'].fillna(df['A'].min())
+     print(df)
+     ```
+
+   - **End of Distribution, Quartiles**
+     ```python
+     q1 = df['A'].quantile(0.25)
+     q3 = df['A'].quantile(0.75)
+     end_of_distribution_value = df['A'].max() + 1
+     df['A_q1'] = df['A'].fillna(q1)
+     df['A_q3'] = df['A'].fillna(q3)
+     df['A_end_of_dist'] = df['A'].fillna(end_of_distribution_value)
+     print(df)
+     ```
+
+#### Assessing Skewness and Symmetry
+- **Skewness and Symmetry**
+  ```python
+  skewness = df['A'].skew()
+  print("Skewness of A:", skewness)
+
+  # Symmetric data typically has skewness close to 0
+  if abs(skewness) < 0.5:
+      print("A is approximately symmetric")
+  else:
+      print("A is skewed")
+  ```
+
+#### Explanation of Imputation Techniques
+1. **KNN Imputation**
+   ```python
+   from sklearn.impute import KNNImputer
+   
+   knn_imputer = KNNImputer(n_neighbors=3)
+   df_knn_imputed = knn_imputer.fit_transform(df[['A', 'C']])
+   df_knn_imputed = pd.DataFrame(df_knn_imputed, columns=['A', 'C'])
+   print(df_knn_imputed)
+   ```
+
+2. **MICE Imputation (Multiple Imputation by Chained Equations)**
+   ```python
+   from sklearn.experimental import enable_iterative_imputer
+   from sklearn.impute import IterativeImputer
+
+   mice_imputer = IterativeImputer(max_iter=10, random_state=0)
+   df_mice_imputed = mice_imputer.fit_transform(df[['A', 'C']])
+   df_mice_imputed = pd.DataFrame(df_mice_imputed, columns=['A', 'C'])
+   print(df_mice_imputed)
+   ```
+
+#### Rationale for Choosing Specific Columns for Imputation
+- Choose columns for imputation based on their impact on the analysis and modeling.
+- Columns with high importance in predictive modeling should be imputed with care.
+- Correlation with other features can guide the choice of imputation method.
+
+This comprehensive guide and code examples should help you effectively handle null values in your datasets.
